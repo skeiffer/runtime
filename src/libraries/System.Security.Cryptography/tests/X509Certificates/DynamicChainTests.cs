@@ -539,6 +539,22 @@ namespace System.Security.Cryptography.X509Certificates.Tests
         }
 
         [Fact]
+        [SkipOnPlatform(TestPlatforms.Windows, "Windows supports UPN name constraints.")]
+        public static void UnknownNameConstraintViolation_UserPrincipalName()
+        {
+            SubjectAlternativeNameBuilder builder = new SubjectAlternativeNameBuilder();
+            builder.AddUserPrincipalName("johndoe@microsoft.com");
+
+            // exlude UPN name constraint for @microsoft.com
+            string nameConstraints = "3024A1223020A01E060A2B060104018237140203A0100C0E406D6963726F736F66742E636F6D";
+
+            TestNameConstrainedChain(nameConstraints, builder, (bool result, X509Chain chain) => {
+                Assert.False(result, "chain.Build");
+                Assert.Equal(PlatformNameConstraints(X509ChainStatusFlags.HasNotSupportedNameConstraint), chain.AllStatusFlags());
+            });
+        }
+
+        [Fact]
         public static void NameConstraintViolation_ExcludedTree_Dns()
         {
             SubjectAlternativeNameBuilder builder = new SubjectAlternativeNameBuilder();
