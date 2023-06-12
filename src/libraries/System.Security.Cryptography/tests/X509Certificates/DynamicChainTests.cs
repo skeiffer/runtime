@@ -540,6 +540,7 @@ namespace System.Security.Cryptography.X509Certificates.Tests
 
         [Fact]
         [SkipOnPlatform(TestPlatforms.Windows, "Windows supports UPN name constraints.")]
+        [SkipOnPlatform(PlatformSupport.AppleCrypto, "macOS ignores UPN name constraints.")]
         public static void UnknownNameConstraintViolation_UserPrincipalName()
         {
             SubjectAlternativeNameBuilder builder = new SubjectAlternativeNameBuilder();
